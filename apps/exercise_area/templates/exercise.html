@@ -1,0 +1,41 @@
+{% extends "navbar.html" %}
+{% load static %}
+
+{% block exercise_active %}
+active
+{% endblock exercise_active %}
+
+{% block exercise_active_span %}
+<span class="sr-only">(current)</span>
+{% endblock exercise_active_span %}
+<!-- 上面這些完善導航條的外觀顯示 -->
+
+{% block css %}
+
+<!-- <link rel="stylesheet" href="{% static 'css/style1.css' %}"> -->
+
+{% endblock css %}
+
+
+
+{% block content %}
+
+<div class='container'>
+  <!-- 熱門科目的按鈕區 -->
+  <div style='margin-top:0.5rem;'>
+    <div>
+        <a class="btn btn-sm btn-outline-secondary" style='padding: 0.1rem 0.2rem;' href="#">微積分</a>
+        <a class="btn btn-sm btn-outline-secondary" style='padding: 0.1rem 0.2rem;' href="#">線性代數</a>
+        <a class="btn btn-sm btn-outline-secondary" style='padding: 0.1rem 0.2rem;' href="#">普通物理</a>
+    </div>
+    {% comment %} <div>
+        <a class="btn btn-sm btn-outline-secondary" style='padding: 0.1rem 0.2rem;' href="#">微積分</a>
+        <a class="btn btn-sm btn-outline-secondary" style='padding: 0.1rem 0.2rem;' href="#">線性代數</a>
+        <a class="btn btn-sm btn-outline-secondary" style='padding: 0.1rem 0.2rem;' href="#">普通物理</a>
+    </div> {% endcomment %}
+  </div>
+  <!-- 微積分的展示區塊 -->
+
+</div>
+
+{% endblock content %}

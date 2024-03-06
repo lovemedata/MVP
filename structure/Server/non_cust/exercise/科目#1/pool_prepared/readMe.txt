@@ -1,0 +1,1 @@
+LibreOffice editor的編輯放在這邊, 確定要匯出的pdf檔放在隔壁pool資料夾裡

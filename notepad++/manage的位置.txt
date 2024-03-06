@@ -1,0 +1,10 @@
+C:\Users\admin\Desktop\VSCodeProjects\312\.venv\MVP
+
+https://www.youtube.com/watch?v=R7fa2XN36qQ   -> 使用的YT影片例子
+
+
+https://www.bilibili.com/video/BV15K42187vj/?spm_id_from=333.337.search-card.all.click&vd_source=3dd15bae5592d893117773fb400ee427  ->   使用的B站影片例子
+
+
+
+https://youtu.be/D7RfX84uFHw -> 這個網址也要把它變成嵌入式(YT)的url

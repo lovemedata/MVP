@@ -1,0 +1,49 @@
+/* 排序圖標的hover效果 */
+#timeSort {
+    position: relative;
+    cursor: pointer;
+}
+
+#timeSort:hover::after {
+    content: "排序";
+    position: absolute;
+    top: -20px; /* Adjust this value to position the text */
+    left: calc(100% + 3px);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+/* 筆記板的hover效果 */
+.note-panel {
+    position: relative;
+    cursor: pointer;
+}
+
+.note-panel:hover::after {
+    content: "開啟筆記板";
+    position: absolute;
+    top: -20px; /* Adjust this value to position the text */
+    left: calc(100% + 3px);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+/* 垃圾筒的hover效果 */
+.delete-panel:hover::after {
+    content: "刪除筆記板";
+    position: left;
+    top: -5px; /* Adjust this value to position the text */
+    right: calc(100% + 3px); /* Position it to the left of the icon */
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+

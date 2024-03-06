@@ -1,0 +1,512 @@
+{% extends "navbar.html" %}
+{% load static %}
+
+{% block learning_active %}
+active
+{% endblock learning_active %}
+
+{% block learning_active_span %}
+<span class="sr-only">(current)</span>
+{% endblock learning_active_span %}
+<!-- 上面這些完善導航條的外觀顯示 -->
+
+{% block css %}
+
+<link rel="stylesheet" href="{% static 'css/style1.css' %}">
+
+{% endblock css %}
+
+
+{% block content %}
+  <div class="container-fluid">
+    <div class='d-flex' style='margin-top:0.5rem;'>
+      <!-- 課名-講者名超連結 -->
+      <div style='width:37.1rem; margin-left:1.5rem;'>
+        <a id= 'courLectName' style='color:black;' href='#'>課名-講者名</a> <!-- 要顯示的規則在學習區p.1 -->
+      </div>      
+      <!-- 影片基本資訊按鈕 -->
+      <button type="button" class="btn btn-sm btn-outline-primary" id="filmInfoBtn">
+          學習影片
+      </button>
+    </div>
+
+    
+    <div class='d-flex' style='margin-top:0.3rem;'> 
+      <!-- 筆記板圖標 -->
+      <div class='align-self-start'> 
+        <i class="fa-solid fa-pen-to-square note-panel" style='font-size:1.0rem;'></i> <!-- 之後要做點擊跳出筆記板的功能 -->
+      </div>
+      <!-- 學習影片 -->
+      <div style='margin-left:0.5rem;'> 
+        <iframe id='filmUrl' width="1000" height="600" src="#"  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <!-- 段落重點 -->
+      <div style='width:20rem; height:600px;'>
+        <strong id='try' style='margin-left:0.5rem;'>段落重點</strong> <i class="fa-solid fa-sort" id='timeSort'></i>
+        <ul id='phase' style='margin-top:0.3rem; line-height:1.0; font-size:0.7rem; max-height: 630px; overflow-y: auto;'>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 起迄時間輸入 -->
+    <div style='width:1000px; margin-left:1.5rem;'>
+      <form id='timeDesc' novalidate>
+        <div class='clearfix'>
+          <div class='row'>
+            <div class='col-2'>
+              <div class= 'form-group'>
+                {{description_form.start}}
+                <span class='time-desc-error-msg' style='color: red;'> {{field.errors.0}} </span>
+              </div>
+            </div>
+            <div class='col-2'>
+              <div class= 'form-group'>
+                {{description_form.end}}
+                <span class='time-desc-error-msg' style='color: red;'> {{field.errors.0}} </span>
+              </div>
+            </div>
+            <div class='col-6'>
+              <div class= 'form-group'>
+                {{description_form.description}}
+                <span class='time-desc-error-msg' style='color: red;'> {{field.errors.0}} </span>
+              </div>
+            </div>
+            <div class='col-2' style='margin-top:0.25rem'>
+              <button type="button" class="btn btn-sm btn-outline-success" id="timeDescSave">
+                儲存
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+
+    
+    <!-- 影片基本資訊彈窗 -->
+    <div class="modal fade" id="filmInfoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h6 class="modal-title" id="exampleModalLabel">影片基本資訊</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+              <form id='filmInfo' novalidate>
+                <div class="clearfix">
+                  <div class="row">
+                    <div class="col-6">
+                      <div class="form-group">
+                        課程名稱
+                        {{film_form.course}}
+                        <span class="film-error-msg" style="color:red;">  </span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="form-group">
+                        授課者
+                        {{film_form.lecturer}}
+                        <span class="film-error-msg" style="color:red;">  </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        網址
+                        {{film_form.url}}
+                        <span class="film-error-msg" style="color:red;">  </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">關閉</button>
+            <button id="filmInfoSave" type="button" class="btn btn-sm btn-primary">確定</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- 刪除筆記板彈窗 -->
+    <div class="modal fade" id="deletePanelModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">刪除筆記板</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            確定刪除此份筆記板？ 一旦刪除，此則筆記板內容將無法恢復。
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">取消</button>
+            <button id='deletePanelConfirm' type="button" class="btn btn-sm btn-danger">刪除</button>
+          </div>
+        </div>
+    </div>
+</div>
+  </div>
+{% endblock content %}
+
+{% block js %}
+    
+  <script> 
+    var DELETE_ITEM = undefined; // 刪除筆記板時會用到
+
+    $(function(){
+      filmInfoBtn();
+      filmInfoSave();
+      timeDescSave();
+      timeStructure();
+      timeControl();
+      deletePanelShow();
+      deletePanel();
+    })
+
+  function filmInfoBtn(){ 
+  // 點擊按鈕開啟影片基本資訊彈窗
+  $('#filmInfoBtn').click(function(){
+    $('#filmInfo')[0].reset(); // 把使用者原本所填欄位的資料清空
+    $('.film-error-msg').empty(); // 把之前輸入錯誤的錯誤訊息清掉
+    $('#filmInfoModal').modal('show'); // 再顯示彈窗
+    });
+  }
+
+  function filmInfoSave(){
+  $('#filmInfoSave').click(function(){
+    // 先把之前輸入錯誤的錯誤訊息清掉
+    $('.film-error-msg').empty();
+
+    // 用ajax請求把使用者輸入的訊息傳到後台
+    $.ajax({
+        url: "/learning/",
+        type: "post",
+        data: $("#filmInfo").serialize(),
+        dataType: "JSON",
+        success: function(res){
+          if(res.status){ 
+            $("#phase").empty()
+            //填寫正確就在頁面中顯示
+            $("#courLectName").text(res.course+"-"+res.lecturer)
+            $("#filmUrl").attr('src', res.url)
+            
+            //把此部影片的資訊儲存到用戶的本地瀏覽器, 以使重新整理以後還可以是這部影片及其相關資訊
+            localStorage.setItem('lastWatchedVideoUrl', res.url); // 影片的url
+            localStorage.setItem('lastWatchedVideoName', res.course+"-"+res.lecturer) // 課名-講者名
+            localStorage.setItem('lastWatchedVideoNotes', JSON.stringify(res.start_end_dict)); // 影片的筆記
+            
+            // 把url影片對應的資料夾裡面的每一份筆記檔案展示在段落重點區  
+            $.each(res.start_end_dict, function(key, value){ 
+              nameArray = key.split("-");
+              // 創建li標籤, 裡頭包含icon, a和strong標籤
+              let li = $('<li>').attr({'start':value.start, 'end':value.end})
+              let a = $('<a>').attr('href', '#');
+              let strong = $('<strong>').attr('class','film-second').text(nameArray[0]);
+              let notePanelIcon = $('<i>').attr({'class': 'fa-solid fa-pen-to-square note-panel', 'style': 'margin-right:0.3rem;'})
+              // 創建p標籤, 並且把它加進上面已經創好的li標籤裡
+              let p = $('<p>').attr({'style': 'position:relative;',}).text(nameArray[1]);
+              let deletePanelIcon = $('<i>').attr({'class': 'fa-solid fa-trash-can delete-panel', 'style': 'position: absolute; bottom: 0; right: 0;'});
+              a.append(strong);
+              p.append(deletePanelIcon);
+              li.append(notePanelIcon);
+              li.append(a);
+              li.append(p);
+
+              // 把整個li標籤加進ul標籤
+              $('#phase').append(li);
+            });
+            $("#filmInfoModal").modal("hide");
+
+            }else{ 
+              // 填寫錯誤就產生錯誤訊息
+              $.each(res.errors, function(name,errorList){
+                $('#id_' + name).next().text(errorList[0]);
+            })
+          }
+        }
+    })
+  });
+  }
+
+  function timeDescSave(){
+    $('#timeDescSave').click(function(){
+        $('.time-desc-error-msg').empty(); // 先把之前輸入錯誤的錯誤訊息清掉
+    
+    // 獲取當前頁面學習影片的網址
+    var filmUrl = $('#filmUrl').attr('src');
+    var timeDesc = $("#timeDesc").serializeArray();
+
+    timeDesc.push({name:'filmUrl', value:filmUrl});
+    // 用ajax請求把使用者輸入的訊息傳到後台
+    $.ajax({
+        url: "/learning/",
+        type: "post",
+        data: timeDesc,
+        dataType: "JSON",
+        success: function(res){
+          if(res.status===true){
+            $('#timeDesc')[0].reset(); // 把使用者原本所填欄位的資料清空
+
+            /* 在前端頁面創造這個li標籤 */
+            // 創建li標籤, 裡頭包含a和strong標籤
+            let li = $('<li>').attr({'start':res.data.start_time, 'end':res.data.end_time})
+            let a = $('<a>').attr('href', '#');
+            let strong = $('<strong>').attr('class','film-second').text(res.data.note_name_display[0]);
+            let notePanelIcon = $('<i>').attr({'class': 'fa-solid fa-pen-to-square note-panel', 'style': 'margin-right:0.3rem;'})
+            // 創建p標籤, 並且把它加進上面已經創好的li標籤裡
+            let p = $('<p>').attr({'style': 'position:relative;',}).text(res.data.note_name_display[1]);
+            let deletePanelIcon = $('<i>').attr({'class': 'fa-solid fa-trash-can delete-panel', 'style': 'position: absolute; bottom: 0; right: 0;'});
+            a.append(strong);
+            p.append(deletePanelIcon);
+            li.append(notePanelIcon);
+            li.append(a);
+            li.append(p);
+
+            // 把整個li標籤加進ul標籤
+            $('#phase').append(li);
+
+            /* 把這個新增的li標籤加到瀏覽器的緩存裡 */
+            let notes = JSON.parse(localStorage.getItem('lastWatchedVideoNotes')) || {}; // 拿到localStorage裡lastWatchedVideoNotes這個key的值(或空的object)
+            let newNote = {
+              'start':res.data.start_time,
+              'end':res.data.end_time,
+            } 
+            notes[res.data.note_name_display[0]+'-'+res.data.note_name_display[1]] = newNote;
+            // 把新增的筆記更新到緩存中
+            localStorage.setItem('lastWatchedVideoNotes', JSON.stringify(notes));
+
+            }else if(res.status==='duplicate'){ // 輸入的時段已經存在
+              alert(res.message);
+            }else{
+              $.each(res.errors, function(name,errorList){
+                $('#id_' + name).next().text(errorList[0]);
+            })
+          }
+        }
+    })
+});
+}
+
+  function timeStructure(){
+    $('#timeSort').click(function(){  
+      var $phase = $("#phase");
+      
+      // 大時段包含小時段
+      var $liItems = $phase.children("li");
+      $liItems.each(function() {
+          var $currentItem = $(this);
+          var currentStart = parseInt($currentItem.attr("start"));
+          var currentEnd = parseInt($currentItem.attr("end"));
+  
+          $liItems.each(function() {
+              var $otherItem = $(this);
+              if ($currentItem.is($otherItem)) return; // Skip comparing with itself
+              var otherStart = parseInt($otherItem.attr("start"));
+              var otherEnd = parseInt($otherItem.attr("end"));
+  
+              if (otherStart >= currentStart && otherEnd <= currentEnd) {
+                  // The other item is completely contained within the current item
+                  var $subList = $currentItem.children("ul");
+                  if (!$subList.length) {
+                      $subList = $("<ul></ul>");
+                      $currentItem.append($subList);
+                  }
+                  $subList.append($otherItem);
+              }
+          });
+      });
+
+      // 排序
+      var $phase = $("#phase");
+
+      // Sort nested <li> elements within their own layer
+      $phase.find('ul').each(function() {
+          var $subList = $(this);
+          var subLis = $subList.children('li').get();
+          subLis.sort(function(a, b) {
+              var end1 = parseInt($(a).attr("end"));
+              var end2 = parseInt($(b).attr("end"));
+
+              if (end1 !== end2) {
+                  console.log('sort by end');
+                  return end1 - end2; // Sort by end attribute
+              } else {
+                  var start1 = parseInt($(a).attr("start"));
+                  var start2 = parseInt($(b).attr("start"));
+                  console.log('sort by start');
+                  return start1 - start2; // Sort by start attribute if end attributes are equal
+              }
+          });
+          $.each(subLis, function(idx, itm) { $subList.append(itm); });
+      });
+
+      // Sort the first layer of <li> elements
+      var lis = $("#phase > li");
+
+      lis.sort(function(a, b) {
+          var end1 = parseInt($(a).attr("end"));
+          var end2 = parseInt($(b).attr("end"));
+
+          if (end1 !== end2) {
+              console.log('sort by end');
+              return end1 - end2; // Sort by end attribute
+          } else {
+              var start1 = parseInt($(a).attr("start"));
+              var start2 = parseInt($(b).attr("start"));
+              console.log('sort by start');
+              return start1 - start2; // Sort by start attribute if end attributes are equal
+          }
+      });
+
+      // Reorder the <li> elements in #phase
+      $("#phase").empty().append(lis);
+  });
+  }
+
+  function timeControl(){
+    // 點擊段落重點區的時段可以使得影片跳轉至該起始秒數
+    $("#phase").on("click", "li .film-second", function(){      
+      let url = $("#filmUrl").attr('src');
+      let second = $(this).closest('li').attr('start'); 
+      let yt = 'youtube';           
+      let bili = 'bilibili';
+      let urlWithTime;
+  
+      if (url.includes(yt)){ 
+        // 當前影片來自YT
+        let regex = /\?start=(\d+)&autoplay=1/;  // &autoplay=1為自動播放的參數, value=1就是要自動播放
+        url = url.replace(regex, '')
+  
+        let ytSuffix = '?start='; 
+        let autoPlay = '&autoplay=1';
+        urlWithTime = url + ytSuffix + second + autoPlay;
+        // console.log(urlWithTime);
+      }else{
+        // 當前影片來自B站
+        let regex = /&t=\d+/;
+        url = url.replace(regex, '')
+        
+        let biliSuffix = '&t=';
+        urlWithTime = url + biliSuffix + second ;
+        // console.log(urlWithTime);
+      }
+  
+      $("#filmUrl").attr('src', urlWithTime);
+    });
+  }
+  
+  function deletePanelShow(){
+    $('#phase').on('click', 'li .delete-panel', function(){
+        $('#deletePanelModal').modal('show');
+        let start = $(this).closest('li').attr('start');
+        let end = $(this).closest('li').attr('end');
+        let url = $('#filmUrl').attr('src');
+        DELETE_ITEM = {'start': start,
+                       'end': end,
+                       'url': url,
+        };
+    });
+  }
+
+  function deletePanel(){
+    $('#deletePanelConfirm').click(function(){
+      // 發送ajax請求
+      $.ajax({
+        url: "/learning/",
+        type: "post",
+        data: {'DELETE_ITEM': DELETE_ITEM},
+        dataType: "JSON",
+        success: function(res){
+          if(res.status){
+            /* 在前端頁面中把該筆記板標籤刪除 */
+            let start = res.start;
+            let end = res.end;
+            $('li[start="' + start + '"][end="' + end + '"]').remove();
+
+            /* 在緩存中刪除該筆筆記板資料 */
+            let notes = JSON.parse(localStorage.getItem('lastWatchedVideoNotes')) || {}; // 拿到localStorage裡lastWatchedVideoNotes這個key的值(或空的object)
+            delete notes[res.deleted_file_name.replace(/;/g, ':')]; 
+
+            // 也在緩存中刪除該筆數據
+            localStorage.setItem('lastWatchedVideoNotes', JSON.stringify(notes));
+
+            $('#deletePanelModal').modal('hide');         
+          }else{
+            console.log(res.error)
+            $('#deletePanelModal').modal('hide');
+          }
+        }
+    })
+  });
+  }
+
+  window.onload = function(){
+    // 先把段落重點區清空
+    let phase = document.getElementById('phase');
+    while (phase.firstChild) {
+      phase.removeChild(phase.firstChild);
+    }
+
+    let lastWatchedVideo = localStorage.getItem('lastWatchedVideoUrl');
+    let lastWatchedVideoName = localStorage.getItem('lastWatchedVideoName');
+    let lastWatchedVideoNotes = JSON.parse(localStorage.getItem('lastWatchedVideoNotes'));
+
+    if (lastWatchedVideo) {
+        let iframe = document.getElementById('filmUrl');
+        iframe.src = lastWatchedVideo;
+
+        let a = document.getElementById('courLectName');
+        a.textContent = lastWatchedVideoName
+
+        Object.entries(lastWatchedVideoNotes).forEach(([key, value]) => {
+          // Split the key into an array
+          let nameArray = key.split("-");
+        
+          // Create an li element
+          let li = document.createElement('li');
+          li.setAttribute('start', value.start);
+          li.setAttribute('end', value.end);
+        
+          // Create an note panel icon element
+          let notePanelIcon = document.createElement('i');
+          notePanelIcon.setAttribute('class', 'fa-solid fa-pen-to-square note-panel');
+          notePanelIcon.setAttribute('style', 'margin-right:0.3rem;');
+          li.appendChild(notePanelIcon);
+
+          // Create an anchor element and a strong element inside it
+          let a = document.createElement('a');
+          a.setAttribute('href', '#');
+          let strong = document.createElement('strong');
+          strong.setAttribute('class', 'film-second');
+          strong.textContent = nameArray[0];
+          a.appendChild(strong);
+          li.appendChild(a);
+        
+          // Create a p element
+          let p = document.createElement('p');
+          p.setAttribute('style', 'position:relative;')
+          p.textContent = nameArray[1];
+
+          // Create an delete panel icon element
+          let deletePanelIcon = document.createElement('i');
+          deletePanelIcon.setAttribute('class', 'fa-solid fa-trash-can delete-panel');
+          deletePanelIcon.setAttribute('style', 'position: absolute; bottom: 0; right: 0;');
+          p.appendChild(deletePanelIcon);
+
+          li.appendChild(p);
+
+          // Append the li element to the ul element with id 'phase'
+          document.getElementById('phase').appendChild(li);
+        });       
+    }
+};
+
+  </script>
+
+{% endblock js %}
